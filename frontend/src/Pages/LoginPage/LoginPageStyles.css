@@ -1,0 +1,31 @@
+.login-container {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10vh;
+    padding: 30px;
+    width: 40vw;
+    height: 60vh;
+    background-color: var(--primary-color);
+    border-radius: var(--medium-border);
+}
+
+.login-container label {
+    margin-bottom: 5px;
+}
+
+.login-container div {
+    margin-bottom: 20px;
+}
+
+#login-btn {
+    width: 100px;
+    height: 50px;
+    margin-left: 50%;
+    transform: translate(-50%, 0);
+    font-size: 25px;
+    font-weight: bold;
+    color: white;
+}
+
+#login-btn:hover {
+}
