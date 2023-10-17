@@ -36,7 +36,6 @@ app.listen(PORT, () => {
    
 })
 app.get('/test', (req, res) => {
-
  if (connected) {
         testApi(conn).then(result => {
             res.send(result);
@@ -48,4 +47,8 @@ app.get('/test', (req, res) => {
     else {
         res.send('Not connected');
     }
+})
+
+app.get('/create-user', (req, res) => {
+    
 })

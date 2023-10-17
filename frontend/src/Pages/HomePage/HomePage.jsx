@@ -1,4 +1,3 @@
-import React from "react";
 import './HomePageStyles.css';
 
 import Header from "../../components/Header/Header";
@@ -6,8 +5,8 @@ import Header from "../../components/Header/Header";
 const HomePage = () => {
     return (
         <>
-        <Header/>
-            <h1>Homepage</h1>
+            <Header />
+            <h1>ecomepage</h1>
         </>
     )
 }

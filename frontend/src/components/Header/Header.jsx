@@ -9,6 +9,8 @@ const Header = () => {
             <h1>Header</h1>
             <button className="btn btn-primary" onClick={() => navigate('/')}>Home</button>
             <button className="btn btn-success" onClick={() => navigate('/login')}>Login</button>
+            <button className="btn btn-success" onClick={() => navigate('/users')}>User</button>
+
         </header>
     )
 }
