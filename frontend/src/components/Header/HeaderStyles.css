@@ -1,7 +1,22 @@
 header {
-    height: 10vh;
     width: 80%;
     margin: 0 auto;
     background-color: var(--background-color);
     border-bottom: 1px solid var(--text-color);
+}
+
+header nav {
+    padding: 30px;
+}
+header #buttons {
+    display: flex;
+    justify-content: start;
+    gap: 1em;
+}
+
+header #buttons button {
+    min-width: 120px;
+    width: fit-content;
+    height: 50px;
+    font-size: 25px;
 }

@@ -10,26 +10,26 @@ const CreateUserPage = () => {
                 <div className="title">
                     <h1 className="text">Create user</h1>
                 </div>
-                <form>
+                    <form method="post" action="http://localhost:5000/users/create-user">
                     <div className="form-group">
                         <label htmlFor="login">Login</label>
-                        <input type="text" id="login" className="form-control" placeholder="Login" />
+                        <input name="login" type="text" id="login" className="form-control" placeholder="Login" required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="name">Name</label>
-                        <input type="text" id="name" className="form-control" placeholder="Name" />
+                        <input name="name" type="text" id="name" className="form-control" placeholder="Name"  required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
-                        <input type="text" id="email" className="form-control" placeholder="Email" />
+                        <input name="email" type="text" id="email" className="form-control" placeholder="Email" required/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="Birth date">Birth date</label>
-                        <input type="date" placeholder="Birth date" className="form-control"/>
+                        <input type="date" placeholder="Birth date" className="form-control" required/>
                     </div>
                     <div className="form-check">
-                        <input className="form-check-input" type="radio" name="male-gender" id="" />
                         <label className="form-check-label">
+                        <input className="form-check-input" type="radio" name="male-gender" id="" required/>
                             Male
                         </label>
                     </div>
@@ -39,8 +39,8 @@ const CreateUserPage = () => {
                             Female
                         </label>
                     </div>
+                <button type="submit" className="create-user-button btn btn-success btn-lg ">Create</button>
                 </form>
-                <button className="create-user-button btn btn-success btn-lg ">Create</button>
             </div>
         </>
     )

@@ -7,10 +7,12 @@ const Header = () => {
     return (
         <header>
             <h1>Header</h1>
-            <button className="btn btn-primary" onClick={() => navigate('/')}>Home</button>
-            <button className="btn btn-success" onClick={() => navigate('/login')}>Login</button>
-            <button className="btn btn-success" onClick={() => navigate('/users')}>User</button>
-
+            <nav id='buttons'>
+                <button className="btn btn-primary" onClick={() => navigate('/')}>Home</button>
+                <button className="btn btn-success" onClick={() => navigate('/login')}>Login</button>
+                <button className="btn btn-success" onClick={() => navigate('/users')}>Users</button>
+                <button className="btn btn-info" onClick={() => navigate('/users/create-user')}>Create User</button>
+            </nav>
         </header>
     )
 }

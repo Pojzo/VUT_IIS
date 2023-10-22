@@ -3,5 +3,13 @@
     "fs": "^0.0.1-security",
     "fuse.js": "^6.6.2",
     "util": "^0.12.5"
+  },
+  "scripts": {
+    "client": "cd frontend && npm start",
+    "server": "cd backend && node .",
+    "dev": "concurrently npm run client npm run server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.1"
   }
 }
