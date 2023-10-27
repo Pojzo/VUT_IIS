@@ -1,10 +1,14 @@
-import React from "react";
+import React, { } from "react";
 import './LoginPageStyles.css';
 import Header from "../../components/Header/Header";
 
-import { useState } from "react";
+import { useState, useEffect} from "react";
+import Cookies from "js-cookie";
 
 const LoginPage = () => {
+    // try to login using cookie
+
+    const [loggedIn, setLoggedIn] = useState(false);
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
 
@@ -12,23 +16,122 @@ const LoginPage = () => {
         if (login.length === 0) {
             alert('Login cannot be empty');
             e.preventDefault();
+            return false;
         }
+        return true;
+    }
+
+    function getCookie(cname) {
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i <ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+          }
+        }
+        return "";
+    }
+    // try it using session id
+    useEffect(() => {
+        const sessionId = getCookie('sessionId');
+        fetch('http://localhost:5000/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ sessionId }),
+            credentials: 'include'
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'CORRECT_PASSWORD') {
+                    console.log('logged in with cookie');
+                    setLoggedIn(true);
+                }
+            })
+            .catch(err => {
+                console.log('failed to authenticate with cookie', err)
+                setLoggedIn(false)
+            })
+
+
+    }, [loggedIn])
+
+    const handleSubmit = async e => {
+        e.preventDefault();
+        if (!validateForm(e)) {
+            return;
+        }
+        try {
+            const response = await fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ login, password }),
+                credentials: 'include'
+            })
+            const responseData = await response.json();
+            const message = await responseData.message;
+            console.log(responseData);
+            if (!response.ok) {
+                console.log('Something went wrong');
+                return;
+            }
+            if (message === 'CORRECT_PASSWORD') {
+                setLoggedIn(true);
+                console.log('conntected');
+            }
+            else {
+                console.log('Not connected');
+            }
+        }
+        catch (err) {
+            console.log('An error occured', err);
+        }
+    }
+    const handleLogout = () => {
+        const sessionId = getCookie('sessionId');
+        if (!sessionId) setLoggedIn(false);
+        fetch('http://localhost:5000/api/auth/logout', {
+            method: 'POST',
+            body: JSON.stringify({
+                sessionId
+            })
+        })
+    }
+    const token = localStorage.getItem('IIS_TOKEN');
+    if (token) {
+        fetch('http')
+    }
+    if (loggedIn) {
+        return (
+            <>
+                <p>LOGGED IN</p>
+                <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
+            </>
+        )
     }
     return (
         <>
             <Header />
             <div className="login-container">
-                <form action="/login" method="post">
+                <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="login-text">Login</label>
-                        <input name="login" type="text" className="form-control" id="login-text" aria-describedby="loginHelp" placeholder="Enter login" onChange={e => setLogin(e.target.value) }/>
-                            <small id="login-help" className="form-text text-muted"></small>
+                        <input name="login" type="text" className="form-control" id="login-text" aria-describedby="loginHelp" placeholder="Enter login" onChange={e => setLogin(e.target.value)} />
+                        <small id="login-help" className="form-text text-muted"></small>
                     </div>
                     <div className="form-group">
                         <label htmlFor="login-password">Password</label>
-                        <input name="password" type="password" className="form-control" id="login-password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
+                        <input name="password" type="password" className="form-control" id="login-password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
                     </div>
-                    <button className="btn btn-primary mb-2 background-accent text" id="login-btn" type="submit" onClick={e => validateForm(e)}>Login</button>
+                    <button className="btn btn-primary mb-2 background-accent text" id="login-btn" type="submit">Login</button>
                 </form>
             </div>
         </>

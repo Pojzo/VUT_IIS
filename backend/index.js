@@ -1,13 +1,12 @@
 import express from 'express';
 import session from 'express-session';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { createConnection } from './connect.js';
-import * as encrypt from './utils/encrypt.js';
-import * as api from './api.js';
-import { INTERNAL_SERVER_ERROR, DB_NOT_CONNECTED, USER_NOT_FOUND, BAD_REQUEST, USER_ALREADY_EXISTS } from './errorCodes.js';
+import userRoutes from './routes/userRoutes.js';
+// import subjectRoutes from './routes/subjectRoutes.js';
 
 const app = express();
 const PORT = 5000;
@@ -25,120 +24,25 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false }
 }))
-app.use(cors())
+
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}
+
+app.use(cors(corsOptions))
+app.use(cookieParser('1234'));
 app.use(express.static(path.join(BUILD_DIR)));
+app.use('/api', userRoutes)
+// app.use('/api', subjectRoutes)
 
 app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'));
 })
 
-const conn = createConnection();
-let connected = false;
-conn.connect(err => {
-    if (err) {
-        return;
-    }
-    connected = true;
-    // testUser(conn);
-})
-
 app.listen(PORT, () => {
     console.log('Listening on port' + PORT);
 
-})
-app.get('/users', (req, res) => {
-    if (connected) {
-        console.log('fetched all users');
-        api.getAllUsers(conn).then(result => {
-            res.send(result);
-        })
-            .catch(err => {
-                res.send(err);
-            })
-    }
-    else {
-        res.send('Not connected');
-    }
-})
-
-app.post('/users/create-user', async (req, res) => {
-    if (connected) {
-        const userExists = await api.userExists(conn, req.body.login, req.body.email);
-        if (userExists) {
-            return res.status(USER_ALREADY_EXISTS.code).send(USER_ALREADY_EXISTS.message);
-        }
-        return res.send('User created');
-        // api.createUser(conn).then(result => {
-        //     res.send(result);
-        // })
-        //     .catch(err => {
-        //         res.send(err);
-            // })
-    }
-    else {
-        res.send('Not connected');
-    }
-})
-
-app.post('/login', async (req, res) => {
-    try {
-        if (!connected) {
-            return res.status(DB_NOT_CONNECTED.code).send(DB_NOT_CONNECTED.message);
-        }
-
-        const login = req.query.login;
-        const inputPassword = req.body.password;
-
-        if (!login || !inputPassword) {
-            return res.status(BAD_REQUEST.code).send(BAD_REQUEST.message);
-        }
-
-        const user = await api.getUser(conn, login);
-
-        if (!user) {
-            return res.status(USER_NOT_FOUND.code).send(USER_NOT_FOUND.message);
-        }
-        const hashedPassword = await user.password;
-        const passwordCorrect = await encrypt.isPasswordCorrect(inputPassword, hashedPassword);
-
-        if (passwordCorrect) {
-            return res.send('Correct password');
-        }
-        return res.send('Incorrect password');
-
-    }
-    catch (err) {
-        console.error(err);
-        res.status(INTERNAL_SERVER_ERROR.code).send(INTERNAL_SERVER_ERROR.message);
-    }
-})
-
-app.get('/users/user/:login', async (req, res) => {
-    try {
-        if (!connected) {
-            return res.status(DB_NOT_CONNECTED.code).send(DB_NOT_CONNECTED.message);
-        }
-        const login = req.params.login;
-        if (!login) {
-            return res.status(BAD_REQUEST.code).send(BAD_REQUEST.message);
-        }
-
-        const user = await api.getUser(conn, login);
-        if (!user) {
-            return res.status(USER_NOT_FOUND.code).send(USER_NOT_FOUND.message);
-        }
-        console.log('fetched user ', login)
-        return res.send(user);
-    }
-    catch (err) {
-        console.error(err);
-        res.status(INTERNAL_SERVER_ERROR.code).send(INTERNAL_SERVER_ERROR.message);
-    }
-})
-
-app.post('/login', (req, res) => {
-    // print the login and password
-    return;
-    console.log(req.body.login);
-    console.log(req.body.password);
 })

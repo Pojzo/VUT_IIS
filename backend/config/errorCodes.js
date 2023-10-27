@@ -14,6 +14,10 @@ export const USER_ALREADY_EXISTS = {
     code: 400,    
     message: 'User already exists'
 }
+export const INCORRECT_PASSWORD = {
+    code: 400,
+    message: 'Incorrect password'
+}
 export const BAD_REQUEST = {
     code: 400,
     message: 'Bad request'

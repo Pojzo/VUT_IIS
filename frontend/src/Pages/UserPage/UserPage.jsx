@@ -12,7 +12,7 @@ const User = props => {
         navigate(`/users/user/${login}`, {
             state: {
 
-            login: login
+                login: login
             }
         });
     }
@@ -27,13 +27,13 @@ const User = props => {
     )
 }
 
-const UsersList = ({stringFilter}) => {
+const UsersList = ({ stringFilter }) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch('http://localhost:5000/users')
+        fetch('http://localhost:5000/api/users')
             .then(response => response.json())
             .then(data => {
                 setData(data);
@@ -110,10 +110,11 @@ const UsersPage = () => {
 
 export const UserPage = () => {
     const { login } = useParams();
+    console.log(login);
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState(null);
     useEffect(() => {
-        fetch(`http://localhost:5000/users/user/${login}`)
+        fetch(`http://localhost:5000/api/users/user/${login}`)
             .then(response => response.json())
             .then(data => {
                 setData(data);
@@ -125,11 +126,11 @@ export const UserPage = () => {
     }
     return (
         <>
-        <h1>{login}</h1>
-        <ul>
-            {Object.keys(data).map(key => <li>{key}: {data[key]}</li>)}
+            <h1>{login}</h1>
+            <ul>
+                {Object.keys(data).map(key => <li>{key}: {data[key]}</li>)}
 
-        </ul>
+            </ul>
         </>
     )
 }

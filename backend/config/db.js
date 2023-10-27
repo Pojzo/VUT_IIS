@@ -11,6 +11,8 @@ export const  createConnection = () => {
 
 const conn = createConnection();
 
+export default conn;
+
     
 conn.connect(err => {
     if (err) {

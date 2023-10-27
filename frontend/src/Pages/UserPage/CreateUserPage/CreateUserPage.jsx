@@ -10,26 +10,31 @@ const CreateUserPage = () => {
                 <div className="title">
                     <h1 className="text">Create user</h1>
                 </div>
-                    <form method="post" action="http://localhost:5000/users/create-user">
+                    <form method="post" action="http://localhost:5000/api/users/create-user">
                     <div className="form-group">
                         <label htmlFor="login">Login</label>
                         <input name="login" type="text" id="login" className="form-control" placeholder="Login" required/>
                     </div>
                     <div className="form-group">
+                        <label htmlFor="password">Login</label>
+                        <input name="password" type="password" id="password" className="form-control" placeholder="Password" required/>
+                    </div>
+
+                    <div className="form-group">
                         <label htmlFor="name">Name</label>
-                        <input name="name" type="text" id="name" className="form-control" placeholder="Name"  required/>
+                        <input name="name" type="text" id="name" className="form-control" placeholder="Name"  />
                     </div>
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
-                        <input name="email" type="text" id="email" className="form-control" placeholder="Email" required/>
+                        <input name="email" type="text" id="email" className="form-control" placeholder="Email" />
                     </div>
                     <div className="form-group">
                         <label htmlFor="Birth date">Birth date</label>
-                        <input type="date" placeholder="Birth date" className="form-control" required/>
+                        <input type="date" placeholder="Birth date" className="form-control" />
                     </div>
                     <div className="form-check">
                         <label className="form-check-label">
-                        <input className="form-check-input" type="radio" name="male-gender" id="" required/>
+                        <input className="form-check-input" type="radio" name="male-gender" id="" />
                             Male
                         </label>
                     </div>
