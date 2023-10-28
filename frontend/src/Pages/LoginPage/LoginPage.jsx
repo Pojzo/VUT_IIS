@@ -97,12 +97,13 @@ const LoginPage = () => {
     }
     const handleLogout = () => {
         const sessionId = getCookie('sessionId');
-        if (!sessionId) setLoggedIn(false);
         fetch('http://localhost:5000/api/auth/logout', {
             method: 'POST',
-            body: JSON.stringify({
-                sessionId
-            })
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ sessionId }),
+            credentials: 'include'
         })
     }
     const token = localStorage.getItem('IIS_TOKEN');

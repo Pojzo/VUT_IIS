@@ -11,7 +11,7 @@ router.get('/users/user/:login', userController.getUser);
 
 router.post('/users/create-user', middleware(userSchemas.createUserSchema), userController.createUser);
 router.post('/auth/login', middleware(userSchemas.loginSchema, 'body'), userController.loginUser);
-router.post('/auth/logout', (userSchemas.logoutSchema, 'body'), userController.logoutUser);
+router.post('/auth/logout', middleware(userSchemas.logoutSchema, 'body'), userController.logoutUser);
 
 
 export default router;

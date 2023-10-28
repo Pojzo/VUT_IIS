@@ -95,13 +95,48 @@ const loginUser = async (req, res) => {
     }
 }
 
-const logoutUser = async (conn, req, res) => {
-    console.log('logging out');
+const logoutUser = async (req, res) => {
     try {
+
+
+
+        //checks if database is connected
+        if (conn.state === 'disconnected') {
+            console.log('db not connected');
+            return res.status(DB_NOT_CONNECTED.code).send(DB_NOT_CONNECTED.message);
+        }
+
+        const sessionId = req.body.sessionId;
+
+        if (sessionId === undefined) {
+            console.log('session id undefined');
+            return res.status(USER_NOT_FOUND.code).send(USER_NOT_FOUND.message);
+        }
+        //checks if session id exists
+        const sessionExists = await userServices.sessionIdExists(conn, sessionId);
+        //const sessionExists = await userServices.sessionIdExists(conn, req.sessionId);
+
+        if (!sessionExists) {
+            console.log('session doesnt exist');
+            //ERROR
+            return res.status(USER_NOT_FOUND.code).send(USER_NOT_FOUND.message);
+        }
+
+        console.log('session exists');
+        userServices.deleteSessionId(conn, sessionId)
+            .then(() => {
+                res.clearCookie('sessionId');
+                res.json({ message: 'LOGGED_OUT' });
+            })
+            .catch(err => {
+                console.log('Coulndt delete session id', err);
+            })
+        
 
     }
     catch (err) {
-
+        console.error(err);
+        res.status(INTERNAL_SERVER_ERROR.code).send(INTERNAL_SERVER_ERROR.message);
     }
 }
 

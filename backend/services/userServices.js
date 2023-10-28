@@ -1,3 +1,5 @@
+import { resolve } from "path";
+
 const getAllUsers = conn => {
     return new Promise((resolve, reject) => {
         conn.query('SELECT * FROM User', (err, result, fields) => {
@@ -43,11 +45,21 @@ const sessionIdExists = (conn, sessionId) => {
     })
 }
 
+const deleteSessionId = (conn, sessionId) => {
+    return new Promise((resolve, reject) => {  
+        conn.query('DELETE FROM session_table WHERE session_id = ?', [sessionId], (err, result, fields) => {
+            if (err) reject(err);
+            resolve();
+        })
+    })
+}
+
 
 export default {
     getAllUsers,
     getUser,
     userExist,
     storeUser,
-    sessionIdExists
+    sessionIdExists,
+    deleteSessionId
 }
