@@ -1,0 +1,67 @@
+.specific-page-container {
+    margin-top: 30px;
+    width: 50%;
+    background-color: lightgray;
+}
+
+.specific-page-container h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    background-color: blanchedalmond;
+    margin-bottom: 0;
+}
+
+.specific-page-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+}
+
+.specific-table-keys {
+    display: flex;
+    flex-direction: column;
+    background-color: lightgreen;
+    text-align: left;
+}
+
+.specific-table-keys p {
+    /* padding-left: 30px; */
+    margin-top: auto;
+    margin-bottom: auto;
+    
+}
+
+.specific-table-keys * {
+    /* border-top: 1px solid black */
+}
+
+.specific-table-cell {
+    height: 50px;
+    padding: 35px;
+    font-size: 30px;
+    margin: 0;
+}
+
+.specific-table-values {
+    display: flex;
+    flex-direction: column;
+    background-color: lightblue;
+}
+
+.specific-table-values * {
+    min-width: 100px;
+}
+
+.specific-table-keys * {
+    min-width: 100px;
+}
+
+.specific-save-changes-container {
+    width: 100%;
+    text-align: center;
+}
+
+.specific-save-changes-btn {
+    margin-left: auto;
+    margin-right: auto;
+}

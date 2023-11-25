@@ -1,0 +1,15 @@
+.my-subjects-container {
+    margin-top: 20px;
+}
+
+.my-subject-container {
+    font-size: 30px;
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.my-subject-container button {
+    margin-left: 20px;
+    width: 40px;
+    height: 40px;
+}

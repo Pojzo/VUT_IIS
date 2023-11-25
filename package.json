@@ -2,6 +2,7 @@
   "dependencies": {
     "fs": "^0.0.1-security",
     "fuse.js": "^6.6.2",
+    "react-big-calendar": "^1.8.5",
     "util": "^0.12.5"
   },
   "scripts": {
