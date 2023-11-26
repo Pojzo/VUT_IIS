@@ -147,7 +147,6 @@ export const RoomPage = () => {
     const allowedRoles = ['admin', 'teacher', 'scheduler'];
     return (
         <>
-            <Header />
             <SpecificDataPage url={url} fields={fields} protectedFields={protectedFields} aliases={aliases} title={Room} allowedRoles={allowedRoles}/>
         </>
     )

@@ -22,7 +22,7 @@ const BUILD_DIR = path.join(CLIENT_DIR, 'build');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const allowedOrigins = ['http://localhost:3000', 'http://147.229.186.39:3000'];
+const allowedOrigins = ['http://localhost:3000', 'http://34.118.123.150:3000'];
 
 
 const corsOptions = {

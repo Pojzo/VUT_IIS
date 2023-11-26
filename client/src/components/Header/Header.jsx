@@ -40,7 +40,7 @@ const Header = () => {
 
     const handleLogout = () => {
         const sessionId = getCookie('sessionId');
-        fetch('http://147.229.186.39:5000/api/auth/logout', {
+        fetch(`${HOST}/api/auth/logout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ const Header = () => {
                 <LoginButton />
                 {user.role==='admin' && <button className="btn btn-success" onClick={() => navigate('/users')}>Users</button>}
                 <button className="btn btn-success" onClick={() => navigate('/subjects')}>Subjects</button>
-                {(user.role === 'teacher' || user.role === 'scheduler') && <button className="btn btn-success" onClick={() => navigate('/rooms')}>Rooms</button>}
+                {(user.role === 'teacher' || user.role === 'scheduler' || user.role === 'admin') && <button className="btn btn-success" onClick={() => navigate('/rooms')}>Rooms</button>}
                 {user.role === 'admin' && <button className="btn btn-info" onClick={() => navigate('/users/create-user')}>Create User</button>}
                 {user.role === 'admin' && <button className="btn btn-info" onClick={() => navigate('/users/change-user-role')}>Change role</button>}
                 {user.role === 'admin' && <button className="btn btn-info" onClick={() => navigate('/subjects/create-subject')}>Create Subject</button>}

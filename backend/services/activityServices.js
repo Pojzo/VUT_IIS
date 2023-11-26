@@ -6,7 +6,7 @@ const createActivity = (conn, data) => {
         data['frequency'] = null;
     }
     return new Promise((resolve, reject) => {
-        conn.query('INSERT INTO Activity (SUBJECT_CODE, type, duration, room_id, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)', [data.SUBJECT_CODE, data.type, data.duration, data.room_id, data.start_date, data.end_date], (err, result, fields) => {
+        conn.query('INSERT INTO activity (SUBJECT_CODE, type, duration, room_id, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)', [data.SUBJECT_CODE, data.type, data.duration, data.room_id, data.start_date, data.end_date], (err, result, fields) => {
             if (err) reject(err);
             else resolve();
         })
@@ -20,7 +20,7 @@ const getMyActivities = async (conn, user) => {
 
         const activityPromises = mySubjects.map(subject => {
             return new Promise((resolve, reject) => {
-                conn.query("SELECT * FROM Activity WHERE SUBJECT_CODE = ?", subject.SUBJECT_CODE, (err, result, fields) => {
+                conn.query("SELECT * FROM activity WHERE SUBJECT_CODE = ?", subject.SUBJECT_CODE, (err, result, fields) => {
                     if (err) {
                         reject(err)
                     }
@@ -44,7 +44,7 @@ const getMyActivities = async (conn, user) => {
 const createActivityRequest = (conn, data) => {
     return new Promise((resolve, reject) => {
         console.log("toto us data", data);
-        conn.query('INSERT INTO Activity_request (SUBJECT_CODE, type, duration, capacity, start_date, end_date, frequency, teacher_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [data.SUBJECT_CODE, data.type, data.duration, data.capacity, data.start_date, data.end_date, data.frequency, data.teacher], (err, result, fields) => {
+        conn.query('INSERT INTO activity_request (SUBJECT_CODE, type, duration, capacity, start_date, end_date, frequency, teacher_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [data.SUBJECT_CODE, data.type, data.duration, data.capacity, data.start_date, data.end_date, data.frequency, data.teacher], (err, result, fields) => {
         // conn.query('INSERT INTO Activity_request (SUBJECT_CODE, type, duration, capacity, start_date, end_date, frequency) VALUES ("IMA", "lecture", 1, 2, "2023-11-02", "2023-12-01", 1)', (err, result, fields) => {
             if (!err) {
                 // activity_request_id monday_start monday_end tuesday_start tuesday_end wednesday_start wednesday_end thursday_start thursday_end friday_start friday_end comment
@@ -64,7 +64,7 @@ const createActivityRequest = (conn, data) => {
 
 const getActivitiesByRoom = (conn, room_id) => {
     return new Promise((resolve, reject) => {
-        conn.query('SELECT * FROM Activity WHERE room_id = ?', room_id, (err, result, fields) => {
+        conn.query('SELECT * FROM activity WHERE room_id = ?', room_id, (err, result, fields) => {
             if (err) reject(err);
             else resolve(result);
         })
@@ -73,7 +73,7 @@ const getActivitiesByRoom = (conn, room_id) => {
 
 const getActivityRequests = (conn) => {
     return new Promise((resolve, reject) => {
-        conn.query('SELECT * FROM Activity_request\
+        conn.query('SELECT * FROM activity_request\
          JOIN week_requirements on week_requirements.activity_request_id = Activity_request.activity_request_id', 
          (err, result, fields) => {
             if (err) {
@@ -86,7 +86,7 @@ const getActivityRequests = (conn) => {
 
 const solveActivityRequest = (conn, data) => {
     return new Promise((resolve, reject) => {
-        conn.query('UPDATE Activity_request SET status = ?, additional_comment = ?  WHERE activity_request_id = ?', [data.status, data.comment, data.id], (err, result, fields) => {
+        conn.query('UPDATE activity_request SET status = ?, additional_comment = ?  WHERE activity_request_id = ?', [data.status, data.comment, data.id], (err, result, fields) => {
             if (err) {
                 reject(err);
             }

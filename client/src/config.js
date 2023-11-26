@@ -1,2 +1,2 @@
-export const HOST = 'http://147.229.186.39:5000';
+export const HOST = 'http://34.118.123.150:5000';
 export const ROLES = ['student', 'teacher', 'scheduler', 'admin'];

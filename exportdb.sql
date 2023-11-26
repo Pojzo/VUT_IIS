@@ -27,6 +27,8 @@ SET time_zone = "+00:00";
 -- Table structure for table `activity`
 --
 
+use xkovac66;
+
 CREATE TABLE IF NOT EXISTS `activity` (
   `SUBJECT_CODE` varchar(64) NOT NULL,
   `ACTIVITY_ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -80,8 +82,10 @@ CREATE TABLE IF NOT EXISTS `admin` (
 -- Dumping data for table `admin`
 --
 
+/*
 INSERT INTO `admin` (`ID`) VALUES
 (126);
+*/
 
 -- --------------------------------------------------------
 
@@ -245,9 +249,11 @@ CREATE TABLE IF NOT EXISTS `user` (
 -- Dumping data for table `user`
 --
 
+/*
 INSERT INTO `user` (`ID`, `name`, `gender`, `birth_date`, `email`, `address`, `login`, `password`) VALUES
 (126, 'admin', 'on', NULL, 'admin@admin.sk', 'adminova_ulica', 'admin', '$2b$10$phwmmBlDm55MD40PVEfyNODNtv9fPRJXPckJCqrD83K5WG3vBUz4i');
 
+*/
 -- --------------------------------------------------------
 
 --

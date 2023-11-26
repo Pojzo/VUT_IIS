@@ -33,8 +33,9 @@ const getRoom = (req, res) => {
     if (conn.state === 'disconnected') {
         return res.status(DB_NOT_CONNECTED.code).send({ message: DB_NOT_CONNECTED.message });
     }
+	console.log('kokot', req.params.room);
     roomServices.getRoom(conn, req.params.room).then(result => {
-        if (room === null) {
+        if (result === null) {
             const error = new Error("Room not found");
             error.code = 404;
             throw error;

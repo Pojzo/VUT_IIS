@@ -2,9 +2,10 @@ import React from "react";
 import './CreateUserPageStyles.css';
 import Header from "components/Header/Header";
 import CreatePage from "components/CreatePage/CreatePage";
+import { HOST } from "config";
 
 const CreateUserPage = () => {
-    const url = `http://147.229.186.39:5000/api/users/create-user`;
+    const url = `${HOST}/api/users/create-user`;
     const fields = [{
         name: 'login',
         label: 'Login',

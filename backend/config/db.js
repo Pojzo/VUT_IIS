@@ -2,11 +2,12 @@ import mysql from 'mysql2';
 
 export const  createConnection = () => {
     return mysql.createConnection({
-        host: 'localhost',
+        host: '127.0.0.1',
         user: 'root',
-        password: 'IISroot',
-        database: 'xgazdi04',
-        multipleStatements: true
+        password: 'merlin',
+        database: 'xkovac66',
+        multipleStatements: true,
+	    port: 3306
     })
 }
 

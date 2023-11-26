@@ -107,6 +107,7 @@ const onSavedChanges = () => {
 
 const fields = props.fields;
 useEffect(() => {
+	console.log('ty kokot skurveny', url);
     fetch(url, {
         method: 'GET',
         headers: {

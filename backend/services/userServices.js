@@ -1,6 +1,6 @@
 const getAllUsers = conn => {
     return new Promise((resolve, reject) => {
-        conn.query('SELECT * FROM User', (err, result, fields) => {
+        conn.query('SELECT * FROM user', (err, result, fields) => {
             if (err) reject(err);
             resolve(result);
         })
@@ -9,7 +9,7 @@ const getAllUsers = conn => {
 
 const getUser = (conn, login) => {
     return new Promise((resolve, reject) => {
-        conn.query('SELECT * FROM User WHERE login = ?', [login], (err, result, fields) => {
+        conn.query('SELECT * FROM user WHERE login = ?', [login], (err, result, fields) => {
             if (err) reject(err);
             resolve(result.length ? result[0] : null);
         })
@@ -18,7 +18,7 @@ const getUser = (conn, login) => {
 
 const getUserById = (conn, id) => {
     return new Promise((resolve, reject) => {
-        conn.query('SELECT * FROM User WHERE ID = ?', [id], (err, result, fields) => {
+        conn.query('SELECT * FROM user WHERE ID = ?', [id], (err, result, fields) => {
             if (err) reject(err);
             resolve(result.length ? result[0] : null);
         })
@@ -28,7 +28,7 @@ const getUserById = (conn, id) => {
 
 const userExist = (conn, login) => {
     return new Promise((resolve, reject) => {
-        conn.query('SELECT * FROM User WHERE login=?', [login], (err, result, fields) => {
+        conn.query('SELECT * FROM user WHERE login=?', [login], (err, result, fields) => {
             if (err) reject(err);
             console.log(result, 'toto je result', err);
             resolve(result.length > 0)
@@ -73,7 +73,7 @@ const createUser = (conn, data) => {
         const address = data.address || null;
         const login = data.login || null;
         const password = data.password || null;
-        const query = 'INSERT INTO User (name, gender, birth_date, email, address, login, password) VALUES(?, ?, ?, ?, ?, ?, ?)'
+        const query = 'INSERT INTO user (name, gender, birth_date, email, address, login, password) VALUES(?, ?, ?, ?, ?, ?, ?)'
         conn.query(query, [name, gender, birthDate, email, address, login, password], (err, result, fields) => {
             if (err) reject(err);
             resolve();
@@ -83,7 +83,7 @@ const createUser = (conn, data) => {
 
 const updateUser = (conn, data) => {
     return new Promise((resolve, reject) => {
-        conn.query(`UPDATE User SET name=?, email=?, address=?, birth_date=?, password=?, gender=? WHERE login=?`, [data.name, data.email, data.address, data.birth, data.password, data.gender, data.login], (err, result, fields) => {
+        conn.query(`UPDATE user SET name=?, email=?, address=?, birth_date=?, password=?, gender=? WHERE login=?`, [data.name, data.email, data.address, data.birth, data.password, data.gender, data.login], (err, result, fields) => {
             if (err) reject(err);
             resolve();
         })
@@ -92,7 +92,7 @@ const updateUser = (conn, data) => {
 
 const isAdmin = (conn, id) => {
     return new Promise((resolve, reject) => {
-        conn.query("SELECT * FROM Admin where ID=?", [id], (err, result, fields) => {
+        conn.query("SELECT * FROM admin where ID=?", [id], (err, result, fields) => {
             if (err) reject(err);
             console.log(err);
             resolve(result.length > 0);
@@ -102,7 +102,7 @@ const isAdmin = (conn, id) => {
 
 const isStudent = (conn, id) => {
     return new Promise((resolve, reject) => {
-        conn.query("SELECT * FROM Student where ID=?", [id], (err, result, fields) => {
+        conn.query("SELECT * FROM student where ID=?", [id], (err, result, fields) => {
             if (err) reject(err);
             resolve(result.length > 0);
         })
@@ -111,7 +111,7 @@ const isStudent = (conn, id) => {
 
 const isTeacher = (conn, id) => {
     return new Promise((resolve, reject) => {
-        conn.query("SELECT * FROM Teacher where ID=?", [id], (err, result, fields) => {
+        conn.query("SELECT * FROM teacher where ID=?", [id], (err, result, fields) => {
             if (err) reject(err);
             console.log(err);
             resolve(result.length > 0);
@@ -121,7 +121,7 @@ const isTeacher = (conn, id) => {
 
 const isScheduler = (conn, id) => {
     return new Promise((resolve, reject) => {
-        conn.query("SELECT * FROM Scheduler where ID=?", [id], (err, result, fields) => {
+        conn.query("SELECT * FROM scheduler where ID=?", [id], (err, result, fields) => {
             if (err) reject(err);
             resolve(result.length > 0);
         })
@@ -165,7 +165,7 @@ const getUserFromSession = (conn, sessionId) => {
 const deleteUser = (conn, id) => {
     return new Promise((resolve, reject) => {
         conn.query('SET FOREIGN_KEY_CHECKS=0;\
-            DELETE FROM User WHERE ID = ?;\
+            DELETE FROM user WHERE ID = ?;\
             SET FOREIGN_KEY_CHECKS=1;', [id], (err, result, fields) => {
             if (err) reject(err);
             resolve();
@@ -177,10 +177,10 @@ const setUserRole = (conn, login, role) => {
     return new Promise(async (resolve, reject) => {
         const previousRole = await getUserType(conn, login);
         const tableMap = {
-            'admin': 'Admin',
-            'scheduler': 'Scheduler',
-            'teacher': 'Teacher',
-            'student': 'Student'
+            'admin': 'admin',
+            'scheduler': 'scheduler',
+            'teacher': 'teacher',
+            'student': 'student'
         };
         const deleteTable = tableMap[previousRole]
 
