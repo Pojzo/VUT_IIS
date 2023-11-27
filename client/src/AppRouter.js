@@ -22,19 +22,22 @@ import CreateRoomPage from "Pages/RoomPage/CreateRoomPage/CreateRoomPage";
 import RoomsPage from "Pages/RoomPage/RoomPage";
 import { RoomPage } from "Pages/RoomPage/RoomPage";
 
+
+// activities
 import  RequestPage from "Pages/SubjectsPage/RequestPage/RequestPage";
 import MyRequestsPage from "Pages/SubjectsPage/MyRequestsPage/MyRequestsPage";
 
-import { CreateActivityPage } from "Pages/ActivitiesPage/CreateActivityPage";
+import { CreateActivityPage } from "Pages/ActivitiesPage/CreateActivityPage/CreateActivityPage";
 import { UserContext } from "data/UserContext";
 import { UnauthorizedPage } from "Pages/UnauthorizedPage/UnauthorizedPage";
+import ActivitiesPage from "Pages/ActivitiesPage/ActivitiesPage/ActivitiesPage";
 
 const routesRoleMap = {
     guest: ["/", "/login", "/subjects"],
     student: ["/", "/login", "/subjects", "/subjects/subject/:subject", "/subjects/my-subjects", "/subjects/request-page", "/subjects/my-requests"],
-    scheduler: ["/", "/login", "/subjects", "/subjects/subject/:subject", "/subjects/my-subjects", "/subjects/request-page", "/subjects/my-requests", "/rooms", "/rooms/room/:room", "/activities/create-activity"],
+    scheduler: ["/", "/login", "/subjects", "/subjects/subject/:subject", "/subjects/my-subjects", "/subjects/request-page", "/subjects/my-requests", "/rooms", "/rooms/room/:room", "/activities/create-activity", "/activities"],
     teacher: ["/", "/login", "/subjects", "/subjects/subject/:subject", "/subjects/my-subjects", "/subjects/teacher-page", "/subjects/teacher-page/guarantee/:subject", "/subjects/request-page", "/subjects/my-requests"],
-    admin: ["/", "/login", "/users", "/users/user/:login", "/users/create-user", "/users/change-user-role", "/subjects", "/subjects/create-subject", "/subjects/subject/:subject", "/subjects/my-subjects", "/subjects/teacher-page", "/subjects/teacher-page/guarantee/:subject", "/subjects/request-page", "/subjects/my-requests", "/rooms", "/rooms/create-room", "/rooms/room/:room", "/activities/create-activity"]
+    admin: ["/", "/login", "/users", "/users/user/:login", "/users/create-user", "/users/change-user-role", "/subjects", "/subjects/create-subject", "/subjects/subject/:subject", "/subjects/my-subjects", "/subjects/teacher-page", "/subjects/teacher-page/guarantee/:subject", "/subjects/request-page", "/subjects/my-requests", "/rooms", "/rooms/create-room", "/rooms/room/:room", "/activities/create-activity", "/activities"]
 }
 
 const routeComponentMap = {
@@ -55,7 +58,8 @@ const routeComponentMap = {
     "/rooms": <RoomsPage />,
     "/rooms/create-room": <CreateRoomPage />,
     "/rooms/room/:room": <RoomPage />,
-    "/activities/create-activity": <CreateActivityPage />
+    "/activities/create-activity": <CreateActivityPage />,
+    "/activities": <ActivitiesPage />,
 }
 
 const createRoutes = role => {

@@ -10,6 +10,7 @@ import SpecificDataPage from "components/SpecificDataPage/SpecificDataPage";
 import { UserContext } from "data/UserContext";
 import { UnauthorizedPage } from "Pages/UnauthorizedPage/UnauthorizedPage";
 import { HOST } from "config";
+import useFetchRooms from "hooks/roomHooks";
 
 const Room = props => {
     const navigate = useNavigate();
@@ -36,44 +37,20 @@ const Room = props => {
 }
 
 const RoomList = ({ stringFilter }) => {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const {rooms, roomsLoading, roomsError} = useFetchRooms();
 
 
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            setLoading(true);
-    
-            const response = await fetch(`${HOST}/api/rooms`);
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-    
-            const jsonData = await response.json();
-            setData(jsonData);
-          } catch (error) {
-            console.error('Error fetching data:', error);
-            setData([]); // Set data to an appropriate default value in case of an error.
-          } finally {
-            setLoading(false);
-          }
-        };
-    
-        fetchData();
-      }, [stringFilter]);
-    
-    if (!data || data.length === 0)
+    if (!rooms || rooms.length === 0)
     {
         return "no rooms yet";
     }
-    if (loading) {
-        return <p>Loading...</p>
+    if (roomsLoading) {
+        return <p>roomsLoading...</p>
     }
-    let rooms;
-    const createRooms = data => {
-        rooms = data.map(room =>
+
+    let filteredRooms;
+    const createRooms = rooms => {
+        rooms = rooms.map(room =>
             <Room key={room.ROOM_ID} id={room.ROOM_ID} capacity={room.capacity} />
         )
         return rooms;
@@ -81,14 +58,14 @@ const RoomList = ({ stringFilter }) => {
     }
     if (stringFilter.length !== 0) {
         const options = { includeScore: true, threshold: 0.4, keys: ['name', 'code', 'guarantee_name'] }
-        const fuse = new Fuse(data, options);
-        const filteredData = fuse.search(stringFilter).map(room => room.item);
+        const fuse = new Fuse(rooms, options);
+        const filteredrooms = fuse.search(stringFilter).map(room => room.item);
 
-        rooms = createRooms(filteredData);
+        filteredRooms = createRooms(filteredrooms);
     }
     else {
-        console.log(data, 'toto su data', data[0].ROOM_ID);
-        rooms = createRooms(data);
+        console.log(rooms, 'toto su rooms', rooms[0].ROOM_ID);
+        filteredRooms = createRooms(rooms);
     }
     return (
         <table className="table table-striped table-bordered">
@@ -99,7 +76,7 @@ const RoomList = ({ stringFilter }) => {
                 </tr>
             </thead>
             <tbody>
-                {rooms}
+                {filteredRooms}
             </tbody>
         </table>
     )

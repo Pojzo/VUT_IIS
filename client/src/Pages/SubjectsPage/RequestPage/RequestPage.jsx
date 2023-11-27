@@ -6,7 +6,6 @@ import './RequestPageStyle.css';
 
 
 const RequestPage = () => {
-
     const [submitMessage, setSubmitMessage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -21,25 +20,25 @@ const RequestPage = () => {
                 'Content-Type': 'application/json',
             },
             credentials: 'include',
-        }) 
-        .then(response => {
-            setLoading(false);
-            if (!response.ok) {
-                console.log('error', response);
-                throw new Error('Something went wrong!');
-            }
-            return response.json();
         })
-        .then(data => {
-            setData(data);
-            setLoading(false);
-        })
-        .catch(err => {
-            setError(err.message);
-        });
+            .then(response => {
+                setLoading(false);
+                if (!response.ok) {
+                    console.log('error', response);
+                    throw new Error('Something went wrong!');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setData(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                setError(err.message);
+            });
     }, [reload]);
 
-    
+
     const handleSend = (activity_request_id, status) => {
         const element_id = `additional-text-${activity_request_id}`;
         const element = document.getElementById(element_id);
@@ -50,19 +49,19 @@ const RequestPage = () => {
                 'Content-Type': 'application/json',
             },
             credentials: 'include',
-            body: JSON.stringify({ comment: element.value, id: activity_request_id, status: status}),
+            body: JSON.stringify({ comment: element.value, id: activity_request_id, status: status }),
         })
-        .then(response => {
-            reload ? setReload(false) : setReload(true);
-            if (!response.ok) {
-                console.log('error', response);
-                throw new Error('Something went wrong!');
-            }
-            return response.json();
-        })
-        .catch(err => {
-            setError(err.message);
-        });
+            .then(response => {
+                reload ? setReload(false) : setReload(true);
+                if (!response.ok) {
+                    console.log('error', response);
+                    throw new Error('Something went wrong!');
+                }
+                return response.json();
+            })
+            .catch(err => {
+                setError(err.message);
+            });
     }
 
     const frequencyStringMap = {
@@ -113,7 +112,7 @@ const RequestPage = () => {
                 {activities
                     .filter(activity => activity.status === 'submitted')
                     .map(activity => (
-                    <ActivityWindow key={activity.activity_request_id} activity={activity} />
+                        <ActivityWindow key={activity.activity_request_id} activity={activity} />
                     ))}
             </div>
         );

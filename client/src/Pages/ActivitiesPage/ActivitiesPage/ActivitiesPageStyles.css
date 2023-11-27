@@ -1,0 +1,20 @@
+.activities-page {
+    margin-top: 50px;
+}
+
+.activities-list {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 500px);
+    grid-gap: 30px;
+    margin-left: auto;
+}
+
+.activity {
+    border: 1px solid black;
+}
+
+.activity li {
+    font-size: 25px;
+}

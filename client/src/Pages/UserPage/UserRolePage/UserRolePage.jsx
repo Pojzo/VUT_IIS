@@ -1,3 +1,4 @@
+import { ErrorMessage, SuccessMessage } from "components/CreatePage/CreatePage";
 import Header from "components/Header/Header";
 import { ROLES } from "config";
 import { HOST } from "config";
@@ -7,7 +8,6 @@ export const UserRolePage = (props) => {
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
     const [submitMessage, setSubmitMessage] = useState(null);
-    const [role, setRole] = useState('student');
 
     useEffect(() => {
         fetch(`${HOST}/api/users`, {
@@ -33,13 +33,15 @@ export const UserRolePage = (props) => {
                 setError(null)
             })
             .catch(err => {
+                console.log(err)
                 setError(err.message);
             })
 
     }, [])
-    console.log(users)
     const setValuesOnFetch = () => {
+        if (users.length === 0) return;
         const firstUser = users[0];
+        console.log(firstUser)
         const firtsLogin = firstUser.login;
         const firstRole = firstUser.role;
         document.getElementById('user-select').value = firtsLogin;
@@ -111,8 +113,8 @@ export const UserRolePage = (props) => {
                         <button style={{
                         }} className="btn btn-info" type="submit">Change role</button>
                     </form>
-                    <p style={{ color: 'red' }}>{error}</p>
-                    <p style={{ color: 'green' }}>{submitMessage}</p>
+                    {error && <ErrorMessage message={error} />}
+                    {submitMessage && <SuccessMessage message={submitMessage} />}
                 </>
             </div>
         </>

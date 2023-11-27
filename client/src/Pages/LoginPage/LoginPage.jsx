@@ -29,6 +29,7 @@ const LoginPage = () => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
+    const [failedPassword, setFailedPassword] = useState(false);
 
     const navigate = useNavigate();
 
@@ -83,6 +84,7 @@ const LoginPage = () => {
             const message = await responseData.message;
             console.log(responseData);
             if (!response.ok) {
+                setFailedPassword(true);
                 console.log('Something went wrong');
                 return;
             }
@@ -115,6 +117,15 @@ const LoginPage = () => {
                 navigate('/login');
             })
     }
+    const FailedPasswordMessage = () => {
+        if (failedPassword) {
+            return (
+                <div className="alert alert-danger" role="alert">
+                    Wrong password
+                </div>
+            )
+        }
+    }
     const token = localStorage.getItem('IIS_TOKEN');
     if (token) {
         fetch('http')
@@ -134,13 +145,14 @@ const LoginPage = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="login-text">Login</label>
-                        <input name="login" type="text" className="form-control" id="login-text" aria-describedby="loginHelp" placeholder="Enter login" onChange={e => setLogin(e.target.value)} />
+                        <input name="login" type="text" className="form-control" id="login-text" aria-describedby="loginHelp" placeholder="Enter login" onChange={e => setLogin(e.target.value)} required/>
                         <small id="login-help" className="form-text text-muted"></small>
                     </div>
                     <div className="form-group">
                         <label htmlFor="login-password">Password</label>
-                        <input name="password" type="password" className="form-control" id="login-password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
+                        <input name="password" type="password" className="form-control" id="login-password" placeholder="Password" onChange={e => setPassword(e.target.value)} required/>
                     </div>
+                    <FailedPasswordMessage />
                     <button className="btn btn-primary mb-2 background-accent text" id="login-btn" type="submit">Login</button>
                 </form>
             </div>

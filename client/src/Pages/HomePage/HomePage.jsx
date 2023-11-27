@@ -1,11 +1,14 @@
 import './HomePageStyles.css';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Header from "../../components/Header/Header";
 import { HOST } from 'config';
 import "react-datepicker/dist/react-datepicker.css";
-import DatePicker from "react-datepicker";
-import { act } from 'react-dom/test-utils';
+
+import useFetchActivities from 'hooks/activityHooks';
+import { UserContext } from 'data/UserContext';
+
+
 
 // eslint-disable-next-line no-extend-native
 Date.prototype.getWeek = function () {
@@ -15,11 +18,11 @@ Date.prototype.getWeek = function () {
     return Math.ceil(dayOfYear / 7)
 };
 
-const LECTURE_COLOR = 'pink';
-const SEMINAR_COLOR = 'lightblue';
-const LAB_COLOR = 'lightgreen';
-const EXAM_COLOR = 'lightyellow';
-const OTHER_COLOR = 'gray';
+export const LECTURE_COLOR = 'pink';
+export const SEMINAR_COLOR = 'lightblue';
+export const LAB_COLOR = 'lightgreen';
+export const EXAM_COLOR = 'lightyellow';
+export const OTHER_COLOR = 'gray';
 
 const FilledCell = ({ data }) => {
     const color = (() => {
@@ -31,6 +34,12 @@ const FilledCell = ({ data }) => {
         }
         if (data.type === 'lab') {
             return LAB_COLOR;
+        }
+        if (data.type === 'exam') {
+            return EXAM_COLOR;
+        }
+        if (data.type === 'other') {
+            return OTHER_COLOR;
         }
     })()
 
@@ -58,7 +67,7 @@ const CalendarCell = ({ data }) => {
     if (data.type === 'day') {
         return <p>{data.value}</p>
     }
-    if (data.type === 'lecture' || data.type === 'seminar' || data.type === 'lab') {
+    if (data.type === 'lecture' || data.type === 'seminar' || data.type === 'lab' || data.type === 'exam' || data.type === 'other') {
         return (<FilledCell data={data}></FilledCell>)
     }
 }
@@ -66,36 +75,11 @@ const CalendarCell = ({ data }) => {
 const Calendar = (props) => {
     const [week, setWeek] = useState(new Date().getWeek());
     const [year, setYear] = useState(new Date().getFullYear());
-    const [activities, setActivities] = useState([]);
-    const [loading, setLoading] = useState(true);
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
     const hours = Array.from({ length: 24 }).map((_, i) => `${i}:00`).slice(8, 20);
 
 
-    useEffect(() => {
-        fetch(`${HOST}/api/activities/my-activities`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        })
-            .then(async response => {
-                setLoading(false);
-                if (!response.ok) {
-                    const err = await response.json();
-                    throw new Error(err.message || 'Something went wrong!');
-                }
-                return response.json();
-            })
-            .then(({ activities }) => {
-                console.log(activities)
-                setActivities(activities);
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    }, []);
+    const { activities, loading, error } = useFetchActivities();
 
     const weekValues = [...Array(52).keys()].map((_, i) => i + 1);
     const yearValues = [...Array(10).keys()].map((_, i) => i + 2023);
@@ -132,26 +116,12 @@ const Calendar = (props) => {
     data[5][0][0] = { type: 'day', value: 'Friday' };
 
 
-    // data[1][0][1] = { type: 'lecture', room: 'D206', subject: 'IMA' }
-    // data[1][0][2] = { type: 'lecture', room: 'D206', subject: 'IMA' }
-
-    // data[1][1] = Array.from({ length: 13 }).map((_, i) => { return { type: 'empty' } });
-
-    // data[1][1][2] = { type: 'lab', room: 'D206', subject: 'IDS' }
-    // data[1][1][3] = { type: 'lab', room: 'D206', subject: 'IDS' }
-
-    // data[2][0][5] = { type: 'seminar', room: 'D105', subject: 'IPK' }
-    // data[2][0][6] = { type: 'seminar', room: 'D105', subject: 'IPK' }
-    // data[2][0][7] = { type: 'seminar', room: 'D105', subject: 'IPK' }
-
-    // data[4][0][2] = { type: 'lab', room: 'B150', subject: 'IMP' }
-    // data[4][0][3] = { type: 'lab', room: 'B150', subject: 'IMP' }
-    // data[4][0][4] = { type: 'lab', room: 'B150', subject: 'IMP' }
-    // data[4][0][5] = { type: 'lab', room: 'B150', subject: 'IMP' }
-
+    console.log(activities)
     const getActivitiesForCurrentWeek = () => {
         return activities.filter(activity => {
             const endDate = activity.end_date;
+
+            const frequency = activity.frequency;
 
             const startTimestamp = new Date(activity.start_date).getTime();
             const endTimestamp = new Date(endDate).getTime();
@@ -159,8 +129,11 @@ const Calendar = (props) => {
             const startDays = (1 + (week - 1) * 7);
             const endDays = startDays + 5;
 
-            const currentStartWeekTimestamp = new Date(year, 0, startDays, 1).getTime();
             const currentEndWeekTimestamp = new Date(year, 0, endDays, 24).getTime();
+            const startWeek = new Date(activity.start_date).getWeek();
+
+
+
             if (endTimestamp < currentEndWeekTimestamp) {
                 return false;
             }
@@ -168,7 +141,35 @@ const Calendar = (props) => {
             if (startTimestamp > currentEndWeekTimestamp) {
                 return false;
             }
-            return true;
+
+            console.log("startWeek", startWeek, "week", week, "frequency", frequency);
+            if (startWeek === week && frequency === 0) {
+                return true;
+            }
+
+
+            if (frequency === 1) { // weekly
+                return true;
+            }
+            else if (frequency === 2)  // biweekly
+            {
+                if ((startWeek - week) % 2 === 0) {
+                    return true;
+                }
+            }
+            else if (frequency === 3)  // triweekly
+            {
+                if ((startWeek - week) % 3 === 0) {
+                    return true;
+                }
+            }
+            else if (frequency === 4)  // monthly
+            {
+                if (startWeek - week % 4 === 0) {
+                    return true;
+                }
+            }
+            return false;
 
         })
     }
@@ -187,9 +188,11 @@ const Calendar = (props) => {
             const curRow = data[day][i];
             for (let j = startHour; j < startHour + duration; j++) {
                 const index = j - 7;
-                if (index < 0) return false;
+                if (index < 0) {
+                    console.log('index je mensi')
+                    return false;
+                }
                 const cell = curRow[index];
-                console.log(index)
                 if (cell.type !== 'empty') {
                     return true;
                 }
@@ -221,7 +224,6 @@ const Calendar = (props) => {
             const emptyArray = Array.from({ length: 13 }).map((_, i) => { return { type: 'empty' } });
             for (let i = startHour; i < startHour + duration; i++) {
                 const index = i - 7;
-                console.log(index, 'index')
                 emptyArray[index] = obj;
             }
             data[day].push(emptyArray);
@@ -323,10 +325,11 @@ const Calendar = (props) => {
 }
 
 const HomePage = () => {
+    const { user } = useContext(UserContext);
     return (
         <>
             <Header />
-            <Calendar />
+            {user.role !== 'guest' && <Calendar />}
         </>
     )
 }

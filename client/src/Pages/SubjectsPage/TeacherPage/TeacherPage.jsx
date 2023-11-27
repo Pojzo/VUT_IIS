@@ -106,10 +106,12 @@ const TeacherPage = () => {
             <div>
                 <Header />
                 <div className="container">
+                        <small>Predmety, ktore ucitel garantuje</small>
                     <h1>Guarantees</h1>
                     <Guarantees dataGuarantee={dataGuarantee} />
                 </div>
                 <div className="container">
+                    <small>Predmety, v ktorych je ucitel zapisany</small>
                     <h1>Teaches</h1>
                     <Teaches dataTeacher={dataTeacher} />
                 </div>

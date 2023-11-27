@@ -3,6 +3,7 @@ import './SpecificDataPageStyles.css';
 import { UserContext } from "data/UserContext";
 import { UnauthorizedPage } from "Pages/UnauthorizedPage/UnauthorizedPage";
 import Header from "components/Header/Header";
+import { useNavigate } from "react-router-dom";
 
 const SpecificDataPage = (props) => {
     const url = props.url;
@@ -12,6 +13,8 @@ const SpecificDataPage = (props) => {
     const [submitSuccess, setSubmitSuccess] = useState(null); // TODO: show this message in a modal
     const [data, setData] = useState(null);
     const [changesMade, setChangesMade] = useState(false);
+
+    const navigate = useNavigate();
 
     const {user, setUser} = useContext(UserContext);
 
@@ -47,10 +50,16 @@ const SpecificDataPage = (props) => {
             })
                 .then(async response => {
                     if (!response.ok) {
+                        throw new Error('Something went wrong!');
                     }
                     console.log(response.body);
                     setSubmitError(null);
                     setSubmitSuccess('Changes saved successfully!');
+                    // curren url
+                    const redirectUrl  = '/' + window.location.href.split('/')[3];
+                    console.log('toto je redirect url', redirectUrl)
+                    navigate(redirectUrl);
+
                     return response.json();
                 })
                 .catch(err => {
@@ -107,7 +116,6 @@ const onSavedChanges = () => {
 
 const fields = props.fields;
 useEffect(() => {
-	console.log('ty kokot skurveny', url);
     fetch(url, {
         method: 'GET',
         headers: {
@@ -118,7 +126,6 @@ useEffect(() => {
     })
         .then(response => response.json())
         .then(data => {
-            console.log('this is data', data);
             setData(data);
         })
         .catch(error => {

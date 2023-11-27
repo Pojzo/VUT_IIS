@@ -5,18 +5,27 @@ header {
     border-bottom: 1px solid var(--text-color);
 }
 
-header nav {
-    padding: 30px;
-}
 header #buttons {
     display: flex;
     justify-content: start;
-    gap: 1em;
+    padding: 30px;
 }
 
 header #buttons button {
-    min-width: 120px;
+    min-width: 200px;
     width: fit-content;
     height: 50px;
-    font-size: 25px;
+    font-size: 20px;
+}
+
+.create-buttons, .data-buttons, .start-buttons {
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    flex-wrap: wrap;
+   }
+
+.create-buttons *,  .data-buttons *, .start-buttons * {
+    margin-top: 10px;
+    margin-left: 10px;
 }

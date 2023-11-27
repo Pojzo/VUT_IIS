@@ -3,6 +3,7 @@ import { UserContext } from "data/UserContext";
 import Header from "components/Header/Header";
 import { HOST } from "config";
 import { UnauthorizedPage } from "Pages/UnauthorizedPage/UnauthorizedPage";
+import useFetchRooms from "hooks/roomHooks";
 
 const setSubjectCode = (formData, setFormData, e) => {
     setFormData({...formData, SUBJECT_CODE: e.target.value});
@@ -33,6 +34,28 @@ const setRoom = (formData, setFormData, e) => {
     setFormData({...formData, room_id: e.target.value});
 }
 
+const setTeacher = (formData, setFormData, e) => {
+    setFormData({...formData, teacher_login: e.target.value});
+}
+
+
+    const ChooseRoom = ({roomsLoading, roomsError, rooms, formData, setFormData}) => {
+        if (roomsLoading) return <h1>Loading...</h1>
+        else if (roomsError) return <h1>Error</h1>
+        if (rooms) {
+            return (
+                <div className="form-group">
+                    <label htmlFor="activity-room">Room</label>
+                    <select className="form-control" id="activity-room" required onChange={e => setRoom(formData, setFormData, e)} defaultValue="Select Room">
+                        <option disabled selected value>Select room</option>
+                        {rooms.map(room => <option value={room.ROOM_ID}>{room.ROOM_ID}</option>)}
+                    </select>
+                </div>
+            )
+        }
+    }
+
+
 const CreateRegularActivity = forwardRef(({formData, setFormData}, ref) => {
 
     const subject = formData.SUBJECT_CODE;
@@ -43,6 +66,10 @@ const CreateRegularActivity = forwardRef(({formData, setFormData}, ref) => {
     const endDate = formData.end_date;
     console.log('formData', formData)
     const room = formData.room_id;
+    const teacher = formData.teacher_login;
+
+    const {rooms, roomsLoading, roomsError} = useFetchRooms(); 
+
 
     return (
         <form ref={ref}>
@@ -69,65 +96,26 @@ const CreateRegularActivity = forwardRef(({formData, setFormData}, ref) => {
                 <option>3 hours</option>
                 <option>4 hours</option>
             </select>
-
             <div className="form-group">
                 <label htmlFor="activity-frequency">Frequency</label>
-                <input className="form-control" type="number" name="frequency" id="activity-frequency" min={1} max={3} defaultValue={frequency} onChange={e => setFrequency(formData, setFormData, e)} />
-            </div>
-            <div className="form-group">
+            <select className="form-control" id="activity-frequency" required onChange={e => setFrequency(formData, setFormData, e)} defaultValue={frequency}>
+                <option value="0">One time</option>
+                <option value="1">Weekly</option>
+                <option value="2">Biweekly</option>
+                <option value="3">Three weekly</option>
+                <option value="4">Monthly</option>
+            </select>
+        </div>
+
+            {/* <div className="form-group">
                 <label htmlFor="activity-room">Room</label>
                 <input className="form-control" type="text" name="room_id" id="activity-room" onChange={e => setRoom(formData, setFormData, e)} defaultValue={room}required />
-            </div>
+            </div> */}
+            <ChooseRoom loading=    {roomsLoading} error={roomsError} rooms={rooms} formData={formData} setFormData={setFormData} />
             <div className="form-group">
-                <label htmlFor="activity-start-date">Start date + time</label>
-                <input className="form-control" type="datetime-local" name="start_date" id="activity-start-date" defaultValue={startDate} onChange={e => setStartDate(formData, setFormData, e)} />
+                <label htmlFor="activity-teacher">Teacher</label>
+                <input className="form-control" type="text" name="teacher_login" id="activity-teacher" onChange={e => setTeacher(formData, setFormData, e)} defaultValue={teacher} required />
             </div>
-            <div className="form-group">
-                <label htmlFor="activity-end-date">End date</label>
-                <input className="form-control" type="date" name="end_date" id="activity-end-date" defaultValue={endDate} onChange={e => setEndDate(formData, setFormData, e)} />
-            </div>
-        </form>
-    )
-})
-
-const CreateOneTimeActivity = forwardRef(({formData, setFormData}, ref) => {
-    const subject = formData.SUBJECT_CODE;
-    const type = formData.type;
-    const duration = formData.duration;
-    const room = formData.room_id;
-    const startDate = formData.start_date;
-    const endDate = formData.end_date;
-
-    return (
-        <form ref={ref}>
-            <div className="form-group one-time-activity-form">
-                <label htmlFor="subject-code">Subject</label>
-                <input type="text" className="form-control" id="subject-code" placeholder="Enter subject code" required defaultValue={subject} onChange={(e => setSubjectCode(formData, setFormData, e))}/>
-                <small className="form-text text-muted">e.g. IPK, ISA</small>
-            </div>
-            <div className="form-group">
-                <label htmlFor="activity-type">Activity type</label>
-                <select className="form-control" id="activity-type" required defaultValue={type} onChange={e => setActivityType(formData, setFormData, e)}>
-                    <option disabled selected value>Select type</option>
-                    <option>lecture</option>
-                    <option>seminar</option>
-                    <option>lab</option>
-                    <option>exam</option>
-                    <option>other</option>
-                </select>
-            </div>
-            <label htmlFor="activity-duration">Duration</label>
-            <select className="form-control" id="activity-duration" required defaultValue={duration} onChange={e => setDuration(formData, setFormData, e)}>
-                <option>1 hours</option>
-                <option>2 hours</option>
-                <option>3 hours</option>
-                <option>4 hours</option>
-            </select>
- <div className="form-group">
-                <label htmlFor="activity-room">Room</label>
-                <input className="form-control" type="text" name="room_id" id="activity-room" onChange={e => setRoom(formData, setFormData, e)} defaultValue={room}required/>
-            </div>
-
             <div className="form-group">
                 <label htmlFor="activity-start-date">Start date + time</label>
                 <input className="form-control" type="datetime-local" name="start_date" id="activity-start-date" defaultValue={startDate} onChange={e => setStartDate(formData, setFormData, e)} />
@@ -145,12 +133,22 @@ export const CreateActivityPage = () => {
     const [checked, setChecked] = useState(false);
     const [submitMessage, setSubmitMessage] = useState(null);
     const [error, setError] = useState(null);
+    const {rooms, roomsLoading, roomsError} = useFetchRooms();
+
 
     const regularFormRef = useRef(null);
-    const oneTimeFormRef = useRef(null);
 
-    const dateToday = new Date().toISOString();
+    let dateToday = new Date()
+    dateToday.setHours(10);
+    dateToday.setMinutes(0);
+    dateToday.setSeconds(0);
+    dateToday = dateToday.toISOString();
     const dateTodayWithoutTime = dateToday.split('T')[0];
+    // add four months to the date
+
+
+    console.log(dateToday)
+
 
     const [formData, setFormData] = useState({
         duration: '1 hours',
@@ -159,8 +157,12 @@ export const CreateActivityPage = () => {
         end_date:   dateTodayWithoutTime,
         SUBJECT_CODE: '',
         type: 'lecture',
-        room_id: ''
+        room_id: '',
+        teacher_login: ''
     });
+
+
+
 
     useEffect(() => {
         try {
@@ -170,9 +172,7 @@ export const CreateActivityPage = () => {
         catch(err) {}
     }, [])
 
-    const onSwitchChanged = event => {
-        setChecked(event.target.checked)
-    }
+    
 
     const submit = one_time_activity => {
         console.log('submitting form', formData);
@@ -182,6 +182,7 @@ export const CreateActivityPage = () => {
         const hourPlusDate = new Date(sendData['start_date']);
         hourPlusDate.setHours(hourPlusDate.getHours() + 1);
         sendData['start_date'] = hourPlusDate.toISOString();
+        console.log('sendData', sendData);
         fetch(`${HOST}/api/activities/create-activity`, {
             method: 'POST',
             headers: {
@@ -210,25 +211,20 @@ export const CreateActivityPage = () => {
     }
 
     const submitForm = () => {
-        const ref = checked ? oneTimeFormRef : regularFormRef;
-        const formValid = ref.current.reportValidity();
-        console.log('form is valid', formValid);
-        if (!formValid) return;
-        submit(checked);
-    }
+        const valid = regularFormRef.current.reportValidity();
+        if (valid) {
+            submit();
+           }
+        }
+        
 
-    return user.role === 'scheduler' ? (
+    return user.role === 'scheduler' || user.role === 'admin' ? (
         <>
             <Header />
             <div className="width-container">
-                <div className="form-check form-switch">
-                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onChange={onSwitchChanged} />
-                    <label className="form-check-label" for="flexSwitchCheckDefault">One time activity</label>
+                               <div className="">
                 </div>
-                <div className="">
-                </div>
-                {checked && <CreateOneTimeActivity formData={formData} setFormData={setFormData} ref={oneTimeFormRef} />}
-                {!checked && <CreateRegularActivity formData={formData} setFormData={setFormData} ref={regularFormRef} />}
+                <CreateRegularActivity formData={formData} setFormData={setFormData} ref={regularFormRef}/>
 
                 <button type="btn" className="btn btn-info" onClick={submitForm}>Submit</button>
                 {submitMessage && <h1 style={{

@@ -14,6 +14,7 @@ export const GuaranteePage = (state) => {
     const [reload, setReload] = useState(false); // TODO zmenit na [reload, setReload
     const [status, setStatus] = useState(null); // TODO zmenit na [status, setStatus    
     const [error, setError] = useState(null);
+    // const [showTheThing, setShowTheThing] = useState(false);
 
     const handleAddButtonClick = () => {
         const input = document.getElementById('add-subject-input');
@@ -95,7 +96,7 @@ export const GuaranteePage = (state) => {
             return response.json();
         })
         .then(data => {
-            setTeacher(data.message);
+            setTeacher(data);
             setLoading(false);
         })
         .catch(err => {
@@ -111,13 +112,14 @@ export const GuaranteePage = (state) => {
                 <h1>Loading...</h1>
             </div>
         )
-    else if (error) // TODO zmenit
-        return (
-            <div>
-                <Header/>
-                <h1>{error}</h1>
-            </div>
-        )
+
+    // else if (error) // TODO zmenit
+    //     return (
+    //         <div>
+    //             <Header/>
+    //             <h1>{error}</h1>
+    //         </div>
+    //     )
 
     const handleHover = (id) => {
         const element = document.getElementById(id);
@@ -135,6 +137,7 @@ export const GuaranteePage = (state) => {
         const data = new FormData(form);
         data.append('SUBJECT_CODE', subject);
         const jsonData = JSON.stringify(Object.fromEntries(data));
+        console.log('json data', jsonData);
 
         fetch(`${HOST}/api/activities/create-activity-request`, {
             method: 'POST',
@@ -145,6 +148,7 @@ export const GuaranteePage = (state) => {
             credentials: 'include',
         })
         .then(async response => {
+            console.log('response', response);
             if (!response.ok) {
                 console.log('error', response)
                 const jsonData = await response.json();
@@ -153,7 +157,7 @@ export const GuaranteePage = (state) => {
             return response.json();
         })
         .then(data => {
-            setStatus(data.message);
+            setStatus(data);
             setError(null);
         })
         .catch(error => {
@@ -282,7 +286,7 @@ export const GuaranteePage = (state) => {
                     </div>
                     <div className="form-group">
                         <label htmlFor="teacher">Teacher</label>
-                        <input name="teacher" type="text" id="teacher" className="form-control" placeholder="Teacher login" required />
+                        <input name="teacher" type="text" id="teacher_login" className="form-control" placeholder="Teacher login" required />
                     </div>
                     <Frequency />
                     <DaysFree />
@@ -298,6 +302,7 @@ export const GuaranteePage = (state) => {
     }
 
 
+    console.log('teacher', teacher)
 
 
     const showTheThing = (() => {
@@ -306,19 +311,23 @@ export const GuaranteePage = (state) => {
         return true;
     })()
 
-    return !showTheThing ? (
-        <div>
-            <Header />
-            <div className="my-subjects-container">
-                <input type="text" name="Teacher" placeholder="Add Teacher to course" id="add-subject-input" />
-                <button className="btn btn-primary" onClick={handleAddButtonClick}>Add</button>
-                {submitMessage && <p>{submitMessage}</p>}
-                <p>No teachers</p>
+    
+    if (!showTheThing)
+    {
+        return (
+            <div>
+                <Header />
+                <div className="my-subjects-container width-container">
+                    <input type="text" name="Teacher" placeholder="Add Teacher to course" id="add-subject-input" />
+                    <button className="btn btn-primary" onClick={handleAddButtonClick}>Add</button>
+                    {submitMessage && <p>{submitMessage}</p>}
+                    <p>No teachers</p>
+                </div>
             </div>
-        </div>
-    )
-        :
-        (
+        )
+    }
+    else {
+        return (
             <div className=''>
                 <Header />
                 <div className="guarantee-subject-page">
@@ -327,7 +336,7 @@ export const GuaranteePage = (state) => {
                     <button className="btn btn-primary" onClick={handleAddButtonClick}>Add</button>
                     {submitMessage && <p>{submitMessage}</p>}
                     {<ul>
-                        {teacher && teacher.map(teacher => {
+                        {teacher.message && teacher.message.map(teacher => {
                             const btnId = `my-teacher-btn-${teacher.login}`;
                             return (
                                 <div className="my-subject-container" onMouseEnter={() => handleHover(btnId)} onMouseLeave={() => handleHoverOut(btnId)}>
@@ -339,8 +348,13 @@ export const GuaranteePage = (state) => {
                     </ul>}
                 </div>
                 <ActivityForm />
-                <p>{status}</p>
+                {/* <p>{status}</p> */}
+                <div className="my-subjects-container height-container">
+                    <p>{status && status.message}</p>
+                    <p>{error && error}</p> 
+                </div>
             </div>
-</div>
+            </div>
         )
+    }
 }

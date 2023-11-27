@@ -5,11 +5,27 @@ import { useState, useContext} from "react";
 import { UserContext } from "data/UserContext";
 import { UnauthorizedPage } from "Pages/UnauthorizedPage/UnauthorizedPage";
 
+export const SuccessMessage = ({message })=> {
+    return (
+        <div className="alert alert-success" role="alert">
+           {message} 
+        </div>
+    )
+}
+
+export const ErrorMessage = ({message})=> {
+    return (
+        <div className="alert alert-danger" role="alert">
+           {message} 
+        </div>
+    )
+}
+
 const CreatePage = (props) => {
     const [error, setError] = useState(null);
     const [status, setStatus] = useState(null);
 
-    const {user, setUser} = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
     const allowedRoles = props.allowedRoles ? props.allowedRoles : [];
 
@@ -31,6 +47,7 @@ const CreatePage = (props) => {
             credentials: 'include',
         })
             .then(async response => {
+                console.log(response.ok)
                 if (!response.ok) {
                     const json = await response.json();
                     throw new Error('ERROR: ' + response.status + ' ' + json.message)
@@ -43,10 +60,11 @@ const CreatePage = (props) => {
             })
             .catch(error => {
                 setError(error.message);
-                    setStatus(null)
+                setStatus(null)
             })
     }
     const fields = props.fields ? props.fields : [];
+    console.log(error, status)
 
     return allowedRoles.includes(user.role) ? (
         <>
@@ -67,24 +85,24 @@ const CreatePage = (props) => {
                             <div className="form-group">
 
                                 <label htmlFor="">{field.name}</label>
-                                <select className="form-select" aria-label="default select example">
-                                    <option value="">{`Select ${field.name}`}</option>
+                                <select className="form-select" aria-label="default select example" name={field.name}>
+                                    <option value="" >{`Select ${field.name}`}</option>
                                     {field.options.map(option => {
                                         return <option value={option}>{option}</option>
                                     })}
                                 </select>
                             </div>
                     })}
-                    <button type="submit" className="create-user-button btn btn-success btn-lg ">Create</button>
+                    <button type="submit" className="create-user-button btn btn-success btn-lg">Create</button>
                 </form>
 
-                    {error && <p className="error">{error}</p>}
-                    {status && <p className="status">{status}</p>}
+                {error && <ErrorMessage message={error} />}
+                {status &&  <SuccessMessage message={status} />}
             </div>
 
         </>
     ) : (
-        <UnauthorizedPage/>
+        <UnauthorizedPage />
     )
 }
 
