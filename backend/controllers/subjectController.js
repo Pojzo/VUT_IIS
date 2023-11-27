@@ -300,8 +300,6 @@ const getSubjectTeachers = async (req, res) => {
     try {
         const SUBJECT_CODE = subject.SUBJECT_CODE;
         subjectServices.getSubjectTeachers(conn, SUBJECT_CODE).then(result => {
-            result.ok = true;
-            console.log("results", result);
             res.send({ message: result });
         })
             .catch(err => {

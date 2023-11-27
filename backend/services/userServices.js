@@ -2,7 +2,7 @@ const getAllUsers = conn => {
     return new Promise((resolve, reject) => {
         conn.query('SELECT * FROM user', (err, result, fields) => {
             if (err) reject(err);
-            resolve(result);
+            else resolve(result);
         })
     })
 }
@@ -11,7 +11,7 @@ const getUser = (conn, login) => {
     return new Promise((resolve, reject) => {
         conn.query('SELECT * FROM user WHERE login = ?', [login], (err, result, fields) => {
             if (err) reject(err);
-            resolve(result.length ? result[0] : null);
+            else resolve(result.length ? result[0] : null);
         })
     })
 }
@@ -20,7 +20,7 @@ const getUserById = (conn, id) => {
     return new Promise((resolve, reject) => {
         conn.query('SELECT * FROM user WHERE ID = ?', [id], (err, result, fields) => {
             if (err) reject(err);
-            resolve(result.length ? result[0] : null);
+            else resolve(result.length ? result[0] : null);
         })
     })
 }
@@ -30,8 +30,7 @@ const userExist = (conn, login) => {
     return new Promise((resolve, reject) => {
         conn.query('SELECT * FROM user WHERE login=?', [login], (err, result, fields) => {
             if (err) reject(err);
-            console.log(result, 'toto je result', err);
-            resolve(result.length > 0)
+            else resolve(result.length > 0)
         })
     })
 }
@@ -41,7 +40,7 @@ const storeUser = (conn, sessionId, login) => {
         console.log('storing user', sessionId, login);
         conn.query('INSERT INTO session_table (session_id, login, created_at) VALUES(?, ?, ?)', [sessionId, login, new Date()], (err, result, fields) => {
             if (err) reject(err);
-            resolve()
+            else resolve()
         })
     })
 }
@@ -50,7 +49,7 @@ const sessionIdExists = (conn, sessionId) => {
     return new Promise((resolve, reject) => {
         conn.query('SELECT * FROM session_table WHERE session_id = ?', [sessionId], (err, result, fields) => {
             if (err) reject(err);
-            resolve(result.length > 0);
+            else resolve(result.length > 0);
         })
     })
 }
@@ -59,7 +58,7 @@ const deleteSessionId = (conn, sessionId) => {
     return new Promise((resolve, reject) => {
         conn.query('DELETE FROM session_table WHERE session_id = ?', [sessionId], (err, result, fields) => {
             if (err) reject(err);
-            resolve();
+            else resolve();
         })
     })
 }
@@ -76,7 +75,7 @@ const createUser = (conn, data) => {
         const query = 'INSERT INTO user (name, gender, birth_date, email, address, login, password) VALUES(?, ?, ?, ?, ?, ?, ?)'
         conn.query(query, [name, gender, birthDate, email, address, login, password], (err, result, fields) => {
             if (err) reject(err);
-            resolve();
+            else resolve();
         })
     })
 }
@@ -85,7 +84,7 @@ const updateUser = (conn, data) => {
     return new Promise((resolve, reject) => {
         conn.query(`UPDATE user SET name=?, email=?, address=?, birth_date=?, password=?, gender=? WHERE login=?`, [data.name, data.email, data.address, data.birth, data.password, data.gender, data.login], (err, result, fields) => {
             if (err) reject(err);
-            resolve();
+            else resolve();
         })
     })
 }
@@ -94,8 +93,7 @@ const isAdmin = (conn, id) => {
     return new Promise((resolve, reject) => {
         conn.query("SELECT * FROM admin where ID=?", [id], (err, result, fields) => {
             if (err) reject(err);
-            console.log(err);
-            resolve(result.length > 0);
+            else resolve(result.length > 0);
         })
     })
 }
@@ -104,7 +102,7 @@ const isStudent = (conn, id) => {
     return new Promise((resolve, reject) => {
         conn.query("SELECT * FROM student where ID=?", [id], (err, result, fields) => {
             if (err) reject(err);
-            resolve(result.length > 0);
+            else resolve(result.length > 0);
         })
     })
 }
@@ -113,8 +111,7 @@ const isTeacher = (conn, id) => {
     return new Promise((resolve, reject) => {
         conn.query("SELECT * FROM teacher where ID=?", [id], (err, result, fields) => {
             if (err) reject(err);
-            console.log(err);
-            resolve(result.length > 0);
+            else resolve(result.length > 0);
         })
     })
 }
@@ -123,7 +120,7 @@ const isScheduler = (conn, id) => {
     return new Promise((resolve, reject) => {
         conn.query("SELECT * FROM scheduler where ID=?", [id], (err, result, fields) => {
             if (err) reject(err);
-            resolve(result.length > 0);
+            else resolve(result.length > 0);
         })
     })
 }
@@ -157,7 +154,7 @@ const getUserFromSession = (conn, sessionId) => {
     return new Promise((resolve, reject) => {
         conn.query('SELECT * FROM session_table WHERE session_id = ?', [sessionId], (err, result, fields) => {
             if (err) reject(err);
-            resolve(result.length ? result[0] : null);
+            else resolve(result.length ? result[0] : null);
         })
     })
 }
@@ -168,7 +165,7 @@ const deleteUser = (conn, id) => {
             DELETE FROM user WHERE ID = ?;\
             SET FOREIGN_KEY_CHECKS=1;', [id], (err, result, fields) => {
             if (err) reject(err);
-            resolve();
+            else resolve();
         })
     })
 }
@@ -199,7 +196,7 @@ const setUserRole = (conn, login, role) => {
         console.log('inserting into table', insertTable, 'nova rola', role);
         conn.query(`INSERT INTO ${insertTable} (ID) VALUES (?)`, [userId], (err, result, fields) => {
             if (err) reject(err);
-            resolve();
+            else resolve();
         })
     })
 }

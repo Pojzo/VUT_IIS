@@ -150,6 +150,7 @@ const createUser = async (req, res) => {
     console.log('creating user');
     try {
         const hashedPassword = await hashPassword(req.body.password);
+        console.log(req.body);
         const data = {
             login: req.body.login,
             password: hashedPassword,
@@ -266,6 +267,7 @@ const changeUserRole = async (req, res) => {
     if (conn.state === 'disconnected') {
         return res.status(DB_NOT_CONNECTED.code).send({ message: DB_NOT_CONNECTED.message });
     }
+    console.log(req.body)
     const userExists = await userServices.userExist(conn, req.body.login);
     if (!userExists) {
         res.status(USER_NOT_FOUND.code).send({ message: USER_NOT_FOUND.message });
@@ -273,6 +275,10 @@ const changeUserRole = async (req, res) => {
     }
     const user = await userServices.getUser(conn, req.body.login);
     const role = await userServices.getUserType(conn, req.body.login);
+
+    if (role === 'admin') {
+        return res.status(409).send({ message: 'admin role cannot be changed' });
+    }
 
     if (role === req.body.role) {
         return res.status(409).send({ message: 'user already has this role' });

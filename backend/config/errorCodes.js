@@ -38,3 +38,7 @@ export const ROOM_NOT_FOUND = {
     code: 400,
     message: 'Room not found'
 };
+export const ROOM_ALREADY_EXISTS = {
+    code: 400,
+    message: 'Room already exists'
+};

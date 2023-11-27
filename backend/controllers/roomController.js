@@ -1,9 +1,10 @@
 import conn from "../config/db.js";
 import roomServices from "../services/roomServices.js";
+import { ROOM_ALREADY_EXISTS, ROOM_NOT_FOUND } from "../config/errorCodes.js";
 
 const getAllRooms = (req, res) => {
     if (conn.state === 'disconnected') {
-        return res.status(DB_NOT_CONNECTED.code).send(DB_NOT_CONNECTED.message);
+        return res.status(DB_NOT_CONNECTED.code).send({message: DB_NOT_CONNECTED.message});
     }
     roomServices.getAllRooms(conn).then(result => {
         res.send(result);
@@ -13,19 +14,25 @@ const getAllRooms = (req, res) => {
         })
 }
 
-const createRoom = (req, res) => {
+const createRoom = async (req, res) => {
     if (conn.state === 'disconnected') {
-        return res.status(DB_NOT_CONNECTED.code).send(DB_NOT_CONNECTED.message);
+        return res.status(DB_NOT_CONNECTED.code).send({message: DB_NOT_CONNECTED.message});
     }
     const data = {
         id: req.body.id,
         capacity: req.body.capacity,
     }
+    console.log(data)
+    const room = await roomServices.getRoom(conn, data.id);
+    if (room) {
+        return res.status(ROOM_ALREADY_EXISTS.code).send({message: ROOM_ALREADY_EXISTS.message});
+    }
     roomServices.createRoom(conn, data).then(result => {
-        res.send(result);
+        console.log('created room', result)
+        res.send({message: 'Created room'});
     })
         .catch(err => {
-            res.send(err);
+            res.status(500).send({message: err.message});
         })
 }
 
@@ -33,7 +40,7 @@ const getRoom = (req, res) => {
     if (conn.state === 'disconnected') {
         return res.status(DB_NOT_CONNECTED.code).send({ message: DB_NOT_CONNECTED.message });
     }
-	console.log('kokot', req.params.room);
+    console.log('kokot', req.params.room);
     roomServices.getRoom(conn, req.params.room).then(result => {
         if (result === null) {
             const error = new Error("Room not found");
@@ -82,12 +89,14 @@ const deleteRoom = async (req, res) => {
     if (conn.state === 'disconnected') {
         return res.status(DB_NOT_CONNECTED.code).send(DB_NOT_CONNECTED.message);
     }
+    console.log('delete room', req.params.room);
     const room = await roomServices.getRoom(conn, req.params.room);
     if (!room) {
         return res.status(ROOM_NOT_FOUND.code).send(ROOM_NOT_FOUND.message);
     }
     try {
         roomServices.deleteRoom(conn, room.ROOM_ID).then(result => {
+            res.send({ message: 'deleted room' })
         })
             .catch(err => {
                 res.send({ message: err.message });

@@ -3,17 +3,18 @@ import subjectServices from "./subjectServices.js";
 
 const createActivity = (conn, data) => {
     if (!('frequency' in data)) {
+        console.log("nie je");
         data['frequency'] = null;
     }
     return new Promise((resolve, reject) => {
-        conn.query('INSERT INTO activity (SUBJECT_CODE, type, duration, room_id, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)', [data.SUBJECT_CODE, data.type, data.duration, data.room_id, data.start_date, data.end_date], (err, result, fields) => {
+        conn.query('INSERT INTO activity (SUBJECT_CODE, type, duration, room_id, start_date, end_date, teacher_id, frequency) VALUES (?, ?, ?, ?, ?, ?, ?,?)', [data.SUBJECT_CODE, data.type, data.duration, data.room_id, data.start_date, data.end_date, data.teacher_id, data.frequency], (err, result, fields) => {
             if (err) reject(err);
             else resolve();
         })
     })
 }
 
-const getMyActivities = async (conn, user) => {
+const getStudentActivities = async (conn, user) => {
     try {
         const mySubjects = await subjectServices.getMySubjects(conn, user.ID);
         if (mySubjects === null) return reject('No subjects found');
@@ -40,6 +41,29 @@ const getMyActivities = async (conn, user) => {
         throw err;
     }
 }
+
+const getTeacherActivities = async (conn, user) => {
+    return new Promise((resolve, reject) => {
+        conn.query("SELECT * FROM activity WHERE teacher_id = ?", user.ID, (err, result, fields) => {
+            if (err) reject(err);
+            else resolve(result);
+        })
+    })
+}
+
+
+
+const getAllActivities = (conn) => {
+    return new Promise((resolve, reject) => {
+        conn.query('SELECT activity.ACTIVITY_ID, activity.SUBJECT_CODE, activity.duration, activity.start_date, activity.end_date, activity.frequency, activity.room_id, activity.type, user.login FROM activity LEFT JOIN user on activity.teacher_id=user.ID', (err, result, fields) => {
+            if (err) reject(err);
+            else resolve(result);
+        }
+        )
+    })
+}
+
+
 
 const createActivityRequest = (conn, data) => {
     return new Promise((resolve, reject) => {
@@ -74,7 +98,7 @@ const getActivitiesByRoom = (conn, room_id) => {
 const getActivityRequests = (conn) => {
     return new Promise((resolve, reject) => {
         conn.query('SELECT * FROM activity_request\
-         JOIN week_requirements on week_requirements.activity_request_id = Activity_request.activity_request_id', 
+         JOIN week_requirements on week_requirements.activity_request_id = activity_request.activity_request_id', 
          (err, result, fields) => {
             if (err) {
                 reject(err);
@@ -94,7 +118,19 @@ const solveActivityRequest = (conn, data) => {
             {
                 console.log("toto je result", result);
                 resolve(result);
+            }
+        })
+    })
+}
 
+const deleteActivity = (conn, activity_id) => {
+    return new Promise((resolve, reject) => {
+        conn.query('DELETE FROM activity WHERE activity_id = ?', activity_id, (err, result, fields) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(result);
             }
         })
     })
@@ -103,9 +139,12 @@ const solveActivityRequest = (conn, data) => {
 
 export default {
     createActivity,
-    getMyActivities,
+    getStudentActivities,
+    getAllActivities,
+    getTeacherActivities,
     createActivityRequest,
     getActivityRequests,
     solveActivityRequest,
-    getActivitiesByRoom
+    getActivitiesByRoom,
+    deleteActivity
 }

@@ -13,7 +13,22 @@ const createActivity = async (req, res) => {
     }
     const room = await roomServices.getRoom(conn, req.body.room_id);
 
+    const teacher = await userServices.getUser(conn, req.body.teacher_login);
     const subject = await subjectServices.getSubject(conn, req.body.SUBJECT_CODE);
+    console.log(teacher, "teacher");
+
+    if (!teacher) {
+        console.log('creating activity teacher not found', req.body.teacher_login)
+        return res.status(USER_NOT_FOUND.code).send({ message: USER_NOT_FOUND.message });
+    }
+
+    const isTeacher = await userServices.isTeacher(conn, teacher.ID);
+    console.log(isTeacher, "isTeacher")
+    if (!isTeacher) {
+        console.log('creating activity teacher not found', req.body.teacher_login)
+        return res.status(USER_NOT_FOUND.code).send({ message: USER_NOT_FOUND.message });
+    }
+
     if (subject === null) {
         console.log('creating activity subject not found', req.body.SUBJECT_CODE)
         return res.status(SUBJECT_NOT_FOUND.code).send({ message: SUBJECT_NOT_FOUND.message });
@@ -37,8 +52,10 @@ const createActivity = async (req, res) => {
             start_date: new Date(req.body.start_date).toISOString().slice(0, 19).replace('T', ' '),
             end_date: new Date(req.body.end_date).toISOString().slice(0, 19).replace('T', ' '),
             room_id: req.body.room_id,
-            frequency: req.body.frequency
+            frequency: req.body.frequency,
+            teacher_id: teacher.ID,
         }
+        console.log(data);
         
         activityServices.createActivity(conn, data)
         .then(() => {
@@ -57,6 +74,10 @@ const createActivity = async (req, res) => {
 const checkActiviyRoomCollision = async newActivity => {
     if (conn.state === 'disconnected') {
         return { code: DB_NOT_CONNECTED.code, message: DB_NOT_CONNECTED.message };
+    }
+    if (newActivity.frequency === 0)
+    {
+        return false;
     }
     const room = newActivity.room_id;
     // const day = data.start_date.getDay();
@@ -118,14 +139,43 @@ const getMyActivities = async (req, res) => {
         if (!user) {
             return res.status(USER_NOT_FOUND.code).send({ message: USER_NOT_FOUND.message });
         }
-        activityServices.getMyActivities(conn, user)
 
-            .then(activities => {
-                res.send({ activities })
-            })
-            .catch(err => {
-                res.status(INTERNAL_SERVER_ERROR.code).send({ message: err });
-            })
+        const isStudent = await userServices.isStudent(conn, user.ID);
+        const isTeacher = await userServices.isTeacher(conn, user.ID);
+        const isAdmin = await userServices.isAdmin(conn, user.ID);
+        const isScheduler = await userServices.isScheduler(conn, user.ID);
+
+        if (isStudent) {
+            activityServices.getStudentActivities(conn, user)
+
+                .then(activities => {
+
+                    res.send({ activities })
+                })
+                .catch(err => {
+                    res.status(INTERNAL_SERVER_ERROR.code).send({ message: err });
+                })
+        }
+        else if (isTeacher) {
+            activityServices.getTeacherActivities(conn, user)
+
+                .then(activities => {
+                    res.send({ activities })
+                })
+                .catch(err => {
+                    res.status(INTERNAL_SERVER_ERROR.code).send({ message: err });
+                })
+        }
+        else if ((isAdmin) || (isScheduler)) {
+            activityServices.getAllActivities(conn)
+
+                .then(activities => {
+                    res.send({ activities })
+                })
+                .catch(err => {
+                    res.status(INTERNAL_SERVER_ERROR.code).send({ message: err });
+                })
+        }
     }
     catch (err) {
         console.log(err);
@@ -233,11 +283,14 @@ const getActivityRequests = async (req, res) => {
                 return request;
             }
             const user = await userServices.getUserById(conn, request.teacher_id);
+            console.log("toto je user", user);
             // Assuming `login` is a property of the user object
             request.teacher_login = user.login;
+            // console.log(request);
             return request;
         }));
 
+        // console.log(requestsWithLogin);
         res.send({ msg: requestsWithLogin });
     } catch (err) {
         console.log(err);
@@ -247,6 +300,7 @@ const getActivityRequests = async (req, res) => {
 
 
 const getMyActivityRequests = async (req, res) => {
+    console.log('getMyActivityRequests');
     if (conn.state === 'disconnected') {
         return res.status(DB_NOT_CONNECTED.code).send({ message: DB_NOT_CONNECTED.message });
     }
@@ -276,7 +330,7 @@ const getMyActivityRequests = async (req, res) => {
 const solveActivityRequest = async (req, res) => {
     if (conn.state === 'disconnected') {
         return res.status(DB_NOT_CONNECTED.code).send({ message: DB_NOT_CONNECTED.message });
-    } 
+    }
     try {
         const data = {
             comment: req.body.comment,
@@ -298,11 +352,32 @@ const solveActivityRequest = async (req, res) => {
     }
 }
 
+const deleteActivity = async (req, res) => {
+    if (conn.state === 'disconnected') {
+        return res.status(DB_NOT_CONNECTED.code).send({ message: DB_NOT_CONNECTED.message });
+    }
+    console.log('deleting activity', req.params)
+    try {
+        activityServices.deleteActivity(conn, req.params.activity)
+            .then(() => {
+                res.status(200).send({ message: 'Activity deleted' });
+            })
+            .catch(err => {
+                res.status(INTERNAL_SERVER_ERROR.code).send({ message: err.message });
+            })
+    }
+    catch (err) {
+        console.log(err)
+        return res.status(INTERNAL_SERVER_ERROR.code).send({ message: err.message });
+    }
+}
+
 export default {
     createActivity,
     createActivityRequest,
     getMyActivities,
     solveActivityRequest,
     getActivityRequests,
-    getMyActivityRequests
+    getMyActivityRequests,
+    deleteActivity,
 }

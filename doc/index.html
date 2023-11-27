@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>Projekt IIS</title>
+	<style type="text/css">
+		table {
+			border-collapse: collapse;
+		}
+
+		td,
+		th {
+			border: 1px solid black;
+			padding: 0.3em 0.5em;
+			text-align: left;
+		}
+
+		dt {
+			font-weight: bold;
+			margin-top: 0.5em;
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu 
+     podle použitého editoru -->
+
+	<h1>Název zadání (editujte)</h1> <!-- Nahradte názvem svého zadání -->
+
+	<dl>
+		<dt>Autoři</dt>
+		<dd>Peter Kováč
+			<a href="mailto:xkovac66@stud.fit.vutbr.cz">xkovac66@stud.fit.vutbr.cz</a> -
+			Backend, 1/2 frontend
+		</dd>
+		<dd>Matúš Gazdík
+			<a href="mailto:xgazdi04@stud.fit.vutbr.cz">xgazdi04@stud.fit.vutbr.cz</a> -
+			Databáza, 1/2 frontend
+		</dd>
+
+		<dt>URL aplikace</dt>
+		<dd><a href="http://34.118.123.150:3000/">Scheduler</a></dd>
+	</dl>
+
+	<h2>Uživatelé systému pro testování</h2>
+	<p>Uveďte prosím existující zástupce <strong>všech rolí uživatelů</strong>.</p>
+	<table>
+		<tr>
+			<th>Login</th>
+			<th>Heslo</th>
+			<th>Role</th>
+		</tr>
+		<tr>
+			<td>admin</td>
+			<td>admin</td>
+			<td>Administrátor</td>
+		</tr>
+		<tr>
+			<td>teacher</td>
+			<td>teacher</td>
+			<td>Učíteľ</td>
+		</tr>
+		<tr>
+			<td>student</td>
+			<td>student</td>
+			<td>Študent</td>
+		</tr>
+		<tr>
+			<td>scheduler</td>
+			<td>scheduler</td>
+			<td>Rozvrhár</td>
+		</tr>
+	</table>
+
+	<h3>Video</h3>
+	<a href="https://photos.app.goo.gl/vY4k1LsS92eYak6o7">Odkaz na video</a>
+
+	<p>Přiložte odkaz na komentované video demostrující použití informačního systému. Zaměřte se na případy užití
+		definované zadáním (např. registrace uživatele, správa uživatelů a činnosti jednotlivých rolí). Video nahrajte
+		například na VUT Google Drive, kde ho bude možné přímo spustit z odkazu.</p>
+
+	<h2>Implementace</h2>
+	<p>Stručná dokumentace k implementaci, která popisuje, které části projektu (např. PHP skripty) implementují
+		jednotlivé případy použití.</p>
+		Backend je riešený pomocou Frameworku express.js. Je použitý návrhový vzor MVC. <br>
+		V adresári routes sú definovené cesty, ktoré posúvajú požiadavky klienta na adekvátne controllery. <br>
+		Napr. <br>
+		userRoutes.js -> userController.js -> userService.js.<br><br>
+		serviceRoutes.js -> serviceController.js -> serviceService.js.<br><br>
+		roomRoutes.js -> roomController.js -> roomService.js.<br><br>
+		activityRoutes.js -> activityController.js -> activityService.js.<br><br>
+
+		Pri cestách je taktiež podľa potreby implementovaný middleware, ktorý kontroluje prítomnosť sessionId v cookie, alebo rolu uživateľa. To znamená, že predtým, ako je požiadavka posunutá na kontrolér, musí prejsť všetkými middlewarmi<br><br>
+
+		Frontend je implementovaný pomocou React.js. <br>
+
+<br><br><br><br><br>
+
+
+	<img style="margin-right: 100px" src="diagram.png" alt="Databáze" />
+
+	<h3>Inštalácia</h3>
+	<h4>Softwareove požiadavky</h4>
+	<ul>
+		<li>node v20.2.0</li>
+		<li>npm v9.6.6</li>
+		<li>mariadb Ver 15.1 Distrib 10.5.21/mysql Ver 8.0.31</li>
+	</ul>
+	</h3>
+	<h4>Backend</h4>
+	<ol>
+		<li>
+			Rozbalit archív xgazdi04_xkovac66.zip
+		</li>
+		<li>
+			V adresári <strong>backend</strong> spustiť príkaz <strong>npm install</strong>
+		</li>
+		<li>
+			Príkazom <strong>node . </strong> spustiť server
+		</li>
+	</ol>
+
+	<h4>Frontend</h4>
+	<ol>
+		<li>
+			V adresári <strong>client</strong> spustiť príkaz <strong>npm install</strong>
+		</li>
+		<li>
+			<strong>npm run build</strong>
+		</li>
+		<li>
+			<strong>serve -s build -l tcp://0.0.0.0:3000</strong>
+		</li>
+	</ol>
+	<h4>Databáza </h4>
+	<ol>
+		<li>
+			Vytvoriť databázu xkovac66.
+		</li>
+		<li>
+			<strong>mysql -u xkovac66 -p xkovac66 < export.sql</strong>
+		</li>
+		<li>
+			Admina je možné vytvoriť len priamo cez príkazový riadok. Následne admin vytvára ostatných uživateľov cez
+			rozhranie aplikácie.
+		</li>
+	</ol>
+
+	<p>v backend/config/db.js treba nastaviť pripojenie na databázu</p>
+	<p>port, na ktorom bezi server je mozne nakonfigurovat v backend/index.js</p>
+	<p>v client/src/config.js treba nastaviť konštantu HOST na ip adresu backendového servera</p>
+
+	<h2>Známé problémy</h2>
+	<p>
+		Nie je možné vytvárať osobné požiadavky na rozvrh individuálne pre učiteľa. Časové požiadavky vytvára garant
+		predmetu a následne ich posiela rozvrhárovi, ktorý <br>
+		ich môže schváliť alebo zamietnuť a následne podľa nich vytvára aktivitu.
+	</p>

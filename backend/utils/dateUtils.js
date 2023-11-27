@@ -7,6 +7,9 @@ const WEEK_DAYS = 7;
 const weekMiliseconds = WEEK_DAYS * DAY_HOURS * HOURS_MINUTES * MINUTE_SECONDS * SECONDS_MILISECONDS;
 
 export const getAllDatesInRange = (startDate, endDate, frequency=1) => {
+    if (frequency === 0) {
+        return startDate;
+    }
     const dates = [startDate];
     const timeIncrement = weekMiliseconds * frequency;
     while (startDate < endDate) {

@@ -2,7 +2,7 @@ import mysql from 'mysql2';
 
 export const  createConnection = () => {
     return mysql.createConnection({
-        host: '127.0.0.1',
+        host: '34.118.123.150',
         user: 'root',
         password: 'merlin',
         database: 'xkovac66',
